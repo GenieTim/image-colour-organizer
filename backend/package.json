@@ -1,0 +1,52 @@
+{
+  "name": "image-colour-organizer",
+  "description": "An indexer of photos/images and especially their colour",
+  "version": "0.0.0",
+  "author": "Tim Bernhard @GenieTim",
+  "bin": {
+    "image-colour-organizer": "./bin/run"
+  },
+  "bugs": "https://github.com/GenieTim/image-colour-organizer/issues",
+  "dependencies": {
+    "@oclif/command": "^1.7.0",
+    "@oclif/config": "^1.16.0",
+    "@oclif/plugin-help": "^3.1.0",
+    "colorthief": "^2.3.2"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.22.2",
+    "eslint": "^5.16.0",
+    "eslint-config-oclif": "^3.1.0",
+    "globby": "^10.0.2"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json",
+    "/src"
+  ],
+  "homepage": "https://github.com/GenieTim/image-colour-organizer",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "GPL-3.0",
+  "main": "src/index.js",
+  "oclif": {
+    "commands": "./src/commands",
+    "bin": "image-colour-organizer",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "GenieTim/image-colour-organizer",
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "eslint .",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "test": "echo NO TESTS",
+    "version": "oclif-dev readme && git add README.md"
+  }
+}
