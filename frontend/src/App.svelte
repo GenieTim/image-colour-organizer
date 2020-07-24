@@ -11,6 +11,7 @@
   export let colourFilter = ''
   export let filterColour = false
   export let heartedOnly = false
+  export let filtering = false
 
   fileIndex.forEach((file) => {
     // merge the palettes
@@ -26,11 +27,12 @@
       L: tiny.getLuminance(),
       A: tiny.getAlpha(),
       B: tiny.getBrightness(),
-		}
-		filter()
+    }
+    filter()
   }
 
   function filter() {
+    filtering = true
     sortedFilteredFiles = fileIndex.filter((file) => {
       if (heartedOnly && !file.hearted) {
         return false
@@ -52,7 +54,26 @@
       }
       return colourMatch
     })
+    filtering = false
   }
+
+  // the grid layouting using Masonry
+  import { onMount, afterUpdate } from 'svelte/internal'
+  import Masonry from 'masonry-layout'
+  let grid
+  let masonryInstance
+  onMount(async () => {
+    masonryInstance = new Masonry(grid, {
+      initLayout: false,
+      columnWidth: '.grid-sizer',
+      itemSelector: '.grid-item',
+      percentPosition: true,
+    })
+  })
+
+  afterUpdate(() => {
+    masonryInstance.layout()
+  })
 </script>
 
 <style>
@@ -60,6 +81,9 @@
     text-align: center;
     padding: 1em;
     margin: 0 auto;
+  }
+  :global(.grid-item) {
+    width: 20%;
   }
 </style>
 
@@ -82,10 +106,18 @@
       <input type="checkbox" bind:checked={heartedOnly} on:blur={filter()} />
     </div>
   </details>
-  {#each sortedFilteredFiles as file}
-    <GridImageElement
-      filePath={file.filePath}
-      palette={file.palette}
-      bind:hearted={file.hearted} />
-  {/each}
+  {#if filtering}
+    <div>Status: Filtering...</div>
+  {/if}
+  <div class="grid" bind:this={grid}>
+    <div class="grid-sizer" style="width: 20%" />
+    {#each sortedFilteredFiles as file}
+      <div class="grid-item">
+        <GridImageElement
+          filePath={file.filePath}
+          palette={file.palette}
+          bind:hearted={file.hearted} />
+      </div>
+    {/each}
+  </div>
 </main>
