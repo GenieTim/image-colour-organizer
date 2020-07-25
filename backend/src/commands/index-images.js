@@ -50,12 +50,17 @@ class IndexerCommand extends Command {
     })
 
     // let targetFilePath = this.config.home + '/image-colours-' + Date.now() + '.json'
-    let targetFilePath = path.join([__dirname, '/../../../image-colour-export.json'])
+    let targetFilePath = path.join(__dirname, '/../../../image-colour-export.json')
     let jsonToWrite = JSON.stringify(allFiles)
-    // this.log('Going to write the following: ' + jsonToWrite)
     this.log('Writing to file: ' + targetFilePath + ', found ' + allFiles.length + ' files.')
-    fs.writeFileSync(targetFilePath, jsonToWrite, { encoding: 'utf-8' })
-    this.exit(0)
+    try {
+      fs.writeFileSync(targetFilePath, jsonToWrite, { encoding: 'utf-8' })
+      this.exit(0)
+    } catch (error) {
+      this.error(error, { exit: false })
+      this.log('Failed to write the following: ' + jsonToWrite)
+      this.exit(1)
+    }
   }
 
   /**
