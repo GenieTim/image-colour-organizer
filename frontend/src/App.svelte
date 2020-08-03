@@ -1,8 +1,8 @@
 <script>
   // TODO: move this to some sort of config or input or whatever
-  import DeltaE from 'delta-e'
+  import DeltaE from 'empfindung'
   import { HsvPicker } from 'svelte-color-picker'
-  import tinycolor from 'tinycolor2'
+  // import tinycolor from 'tinycolor2'
   import fileIndex from '../../image-colour-export.json'
   import GridImageElement from './GridImageElement.svelte'
 
@@ -23,12 +23,8 @@
 
   function colourChange(rgba) {
     // console.log('Found colour', rgba)
-    let tiny = new tinycolor(rgba.detail)
-    colourFilter = {
-      L: tiny.getLuminance(),
-      A: tiny.getAlpha(),
-      B: tiny.getBrightness(),
-    }
+    // let tiny = new tinycolor(rgba.detail)
+    colourFilter = [rgba.detail.r, rgba.detail.g, rgba.detail.b]
     filter()
   }
 
@@ -42,18 +38,7 @@
       let colourMatch = !filterColour
       if (filterColour && colourFilter != '') {
         for (let i = 0; i < file.palette.length; ++i) {
-          let colour = file.palette[i]
-          let tiny = new tinycolor({
-            r: colour[0],
-            g: colour[1],
-            b: colour[2],
-          })
-          let objectiveColour = {
-            L: tiny.getLuminance(),
-            A: tiny.getAlpha(),
-            B: tiny.getBrightness(),
-          }
-          let deltaDiff = DeltaE.getDeltaE00(colourFilter, objectiveColour)
+          let deltaDiff = DeltaE.getDeltaE00(colourFilter, file.palette[i])
           // console.log('Delta diff: ' + deltaDiff)
           if (deltaDiff < allowedColourDifference) {
             // console.log('Found acceptable image')
@@ -64,7 +49,9 @@
       return colourMatch
     })
     filtering = false
-    console.log("Filtering done. " + sortedFilteredFiles.length + " images remaining.")
+    console.log(
+      'Filtering done. ' + sortedFilteredFiles.length + ' images remaining.',
+    )
   }
 
   // the grid layouting using Masonry
@@ -106,7 +93,9 @@
         Allowed Colour Difference
         <input
           type="number"
-          step="0.01" min="0" max="10"
+          step="0.01"
+          min="0"
+          max="10"
           bind:value={allowedColourDifference}
           on:change={() => {
             filter()

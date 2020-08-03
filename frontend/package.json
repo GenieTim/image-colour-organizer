@@ -17,12 +17,11 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
-    "delta-e": "0.0.8",
+    "empfindung": "^1.0.1",
     "masonry-layout": "^4.2.2",
     "sirv-cli": "^0.4.4",
     "svelte-color-picker": "^1.0.7",
     "svelte-lazy-image": "0.0.3",
-    "tinycolor2": "^1.4.1",
-    "uuidv4": "^6.2.0"
+    "uuidv4": "^6.2.1"
   }
 }
