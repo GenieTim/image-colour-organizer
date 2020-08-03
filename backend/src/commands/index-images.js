@@ -31,10 +31,11 @@ class IndexerCommand extends Command {
       // ignore non-images
       // NOTE: e.g. .photoshop, .tif, not supported
       if (!isImage(filePath) || ['.tif', '.photoshop', '.psd'].includes(path.extname(filePath))) {
-        thisCommand.log('No image: ' + filePath)
+        thisCommand.possiblyLog('No image: ' + filePath)
         return
       }
-      thisCommand.log('Image found at: ' + filePath)
+      thisCommand.possiblyLog('Image found at: ' + filePath)
+
       // determine the color palette
       let palette = {}
       try {
@@ -57,11 +58,15 @@ class IndexerCommand extends Command {
     })
 
     // let targetFilePath = this.config.home + '/image-colours-' + Date.now() + '.json'
-    let targetFilePath = path.join([__dirname, '/../../../image-colour-export.json'])
+    let targetFilePath = path.join(__dirname, '/../../../image-colour-export.json')
     let jsonToWrite = JSON.stringify(allFiles)
-    // this.log('Going to write the following: ' + jsonToWrite)
     this.log('Writing to file: ' + targetFilePath + ', found ' + allFiles.length + ' files.')
-    fs.writeFileSync(targetFilePath, jsonToWrite, {encoding: 'utf-8'})
+    try {
+      fs.writeFileSync(targetFilePath, jsonToWrite, {encoding: 'utf-8'})
+    } catch (error) {
+      this.log('Failed to write the following: ' + jsonToWrite)
+      this.error(error, {exit: true})
+    }
     this.exit(0)
   }
 
@@ -167,7 +172,7 @@ IndexerCommand.args = [{
 IndexerCommand.flags = {
   recurse: flags.boolean({char: 'r', description: 'whether to recurse into subdirectories', default: true}),
   colourCount: flags.integer({car: 'c', description: 'number of colours in the colour palette', default: 5}),
-  debug: flags.integer({car: 'd', description: 'whether to output additional info on processed files', default: true}),
+  debug: flags.boolean({char: 'd', description: 'Output information of processed files', default: false}),
 }
 
 module.exports = IndexerCommand
