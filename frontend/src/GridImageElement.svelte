@@ -2,10 +2,9 @@
   import { onMount } from 'svelte'
   import LazyImage from 'svelte-lazy-image'
   import { fromString } from 'uuidv4'
-import src from 'delta-e'
 
-  export let filePath = "";
-  export let imageSizes = {};
+  export let filePath = ''
+  export let imageSizes = {}
   export let palette = []
   export let hearted = false
 
@@ -54,11 +53,13 @@ import src from 'delta-e'
 </style>
 
 <div>
-  <img
-    src={imageSizes[600]}
-    placeholder="https://via.placeholder.com/250?text=placeholder"
-    alt="Image from {filePath}"
-    loading="lazy" />
+  <a href="file://{filePath}" title="Datei öffnen">
+    <img
+      src={imageSizes[600]}
+      placeholder="https://via.placeholder.com/250?text=placeholder"
+      alt="Image from {filePath}"
+      loading="lazy" />
+  </a>
   <button on:click={toggleLike}>
     {#if hearted}❤️{:else}♡{/if}
   </button>
