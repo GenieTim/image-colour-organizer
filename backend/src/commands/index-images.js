@@ -1,4 +1,4 @@
-const { Command, flags } = require('@oclif/command')
+const {Command, flags} = require('@oclif/command')
 const fs = require('fs')
 const path = require('path')
 const ColorThief = require('colorthief')
@@ -21,24 +21,28 @@ class IndexerCommand extends Command {
    * The main starting point
    */
   async run() {
-    const { args, flags } = this.parse(IndexerCommand)
+    const {args, flags} = this.parse(IndexerCommand)
     // walk directory and checkout each file
     let thisCommand = this
     let allFiles = await this.walkDirectory(args.path, flags.recurse, async function (filePath) {
       // ignore non-images
       // NOTE: e.g. .photoshop, .tif, not supported
       if (!isImage(filePath) || ['.tif', '.photoshop', '.psd'].includes(path.extname(filePath))) {
-        thisCommand.log('No image: ' + filePath)
+        if (flags.debug) {
+          thisCommand.log('No image: ' + filePath)
+        }
         return
       }
-      thisCommand.log('Image found at: ' + filePath)
+      if (flags.debug) {
+        thisCommand.log('Image found at: ' + filePath)
+      }
       // determine the color palette
       let palette = {}
       try {
         palette = await ColorThief.getPalette(filePath, flags.colourCount)
       } catch (error) {
         thisCommand.log('Failed to detect colour palette for ' + filePath)
-        thisCommand.error(error, { exit: false })
+        thisCommand.error(error, {exit: false})
         // we just skip them with some log
         return
       }
@@ -54,13 +58,12 @@ class IndexerCommand extends Command {
     let jsonToWrite = JSON.stringify(allFiles)
     this.log('Writing to file: ' + targetFilePath + ', found ' + allFiles.length + ' files.')
     try {
-      fs.writeFileSync(targetFilePath, jsonToWrite, { encoding: 'utf-8' })
-      this.exit(0)
+      fs.writeFileSync(targetFilePath, jsonToWrite, {encoding: 'utf-8'})
     } catch (error) {
-      this.error(error, { exit: false })
       this.log('Failed to write the following: ' + jsonToWrite)
-      this.exit(1)
+      this.error(error, {exit: true})
     }
+    this.exit(0)
   }
 
   /**
@@ -103,8 +106,9 @@ IndexerCommand.args = [{
 }]
 
 IndexerCommand.flags = {
-  recurse: flags.boolean({ char: 'r', description: 'whether to recurse into subdirectories', default: true }),
-  colourCount: flags.integer({ car: 'c', description: 'number of colours in the colour palette', default: 5 }),
+  recurse: flags.boolean({char: 'r', description: 'whether to recurse into subdirectories', default: true}),
+  debug: flags.boolean({char: 'd', description: 'Output information of processed files', default: false}),
+  colourCount: flags.integer({car: 'c', description: 'number of colours in the colour palette', default: 5}),
 }
 
 module.exports = IndexerCommand

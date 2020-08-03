@@ -12,6 +12,7 @@
   export let filterColour = false
   export let heartedOnly = false
   export let filtering = false
+  export let allowedColourDifference = 0.1
 
   fileIndex.forEach((file) => {
     // merge the palettes
@@ -21,7 +22,7 @@
   })
 
   function colourChange(rgba) {
-    console.log('Found colour', rgba)
+    // console.log('Found colour', rgba)
     let tiny = new tinycolor(rgba.detail)
     colourFilter = {
       L: tiny.getLuminance(),
@@ -32,6 +33,7 @@
   }
 
   function filter() {
+    console.log('Filtering...')
     filtering = true
     sortedFilteredFiles = fileIndex.filter((file) => {
       if (heartedOnly && !file.hearted) {
@@ -39,22 +41,30 @@
       }
       let colourMatch = !filterColour
       if (filterColour && colourFilter != '') {
-        file.palette.forEach((colour) => {
-          let tiny = new tinycolor(rgba.detail)
+        for (let i = 0; i < file.palette.length; ++i) {
+          let colour = file.palette[i]
+          let tiny = new tinycolor({
+            r: colour[0],
+            g: colour[1],
+            b: colour[2],
+          })
           let objectiveColour = {
             L: tiny.getLuminance(),
             A: tiny.getAlpha(),
             B: tiny.getBrightness(),
           }
-          // TODO: find better value instead of "5"
-          if (DeltaE.getDeltaE00(filterColour, objectiveColour) < 5) {
+          let deltaDiff = DeltaE.getDeltaE00(colourFilter, objectiveColour)
+          // console.log('Delta diff: ' + deltaDiff)
+          if (deltaDiff < allowedColourDifference) {
+            // console.log('Found acceptable image')
             return true
           }
-        })
+        }
       }
       return colourMatch
     })
     filtering = false
+    console.log("Filtering done. " + sortedFilteredFiles.length + " images remaining.")
   }
 
   // the grid layouting using Masonry
@@ -93,28 +103,47 @@
     <summary>Filter options</summary>
     <div>
       <label>
+        Allowed Colour Difference
+        <input
+          type="number"
+          step="0.01" min="0" max="10"
+          bind:value={allowedColourDifference}
+          on:change={() => {
+            filter()
+          }} />
+      </label>
+      <label>
         Filter Colour
         <input
           type="checkbox"
           bind:checked={filterColour}
-          on:change={filter()} />
+          on:change={() => {
+            filter()
+          }} />
       </label>
-      <HsvPicker
-        on:colorChange={colourChange}
-        hidden={!filterColour}
-        startColor={'#FBFBFB'} />
-      <input type="checkbox" bind:checked={heartedOnly} on:blur={filter()} />
+      <div hidden={!filterColour}>
+        <HsvPicker on:colorChange={colourChange} startColor={'#FBFBFB'} />
+      </div>
+      <label>
+        Only hearted
+        <input
+          type="checkbox"
+          bind:checked={heartedOnly}
+          on:change={() => {
+            filter()
+          }} />
+      </label>
     </div>
   </details>
   {#if filtering}
-    <div>Status: Filtering...</div>
+    <div hidden={filtering}>Status: Filtering...</div>
   {/if}
   <div class="grid" bind:this={grid}>
-    <div class="grid-sizer" style="width: 20%" />
+    <div class="grid-sizer" style="width: 20%; min-height: 20vw" />
     {#each sortedFilteredFiles as file}
       <div class="grid-item">
         <GridImageElement
-          filePath={file.filePath}
+          imagePath={file.path}
           palette={file.palette}
           bind:hearted={file.hearted} />
       </div>

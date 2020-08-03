@@ -22,6 +22,7 @@
     "sirv-cli": "^0.4.4",
     "svelte-color-picker": "^1.0.7",
     "svelte-lazy-image": "0.0.3",
-    "tinycolor2": "^1.4.1"
+    "tinycolor2": "^1.4.1",
+    "uuidv4": "^6.2.0"
   }
 }
