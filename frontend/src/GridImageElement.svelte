@@ -2,6 +2,7 @@
   import LazyImage from "svelte-lazy-image";
 
   export let imagePath = "";
+  export let imageSizes = {};
   export let palette = [];
   export let hearted = false;
 
@@ -28,7 +29,7 @@
 
 <div>
   <LazyImage
-    src={imagePath}
+    src={imageSizes[600]}
     placeholder="https://via.placeholder.com/250?text=placeholder"
     alt="Image from {imagePath}" />
   <button on:click={toggleLike}>

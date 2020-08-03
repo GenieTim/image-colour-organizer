@@ -1,4 +1,6 @@
 /node_modules/
 /public/build/
+/public/resized-images/*
+!/public/resized-images/.gitkeep
 
 .DS_Store

@@ -114,7 +114,8 @@
     {#each sortedFilteredFiles as file}
       <div class="grid-item">
         <GridImageElement
-          filePath={file.filePath}
+          filePath={file.originalPath}
+          imageSizes={file.resizedImages}
           palette={file.palette}
           bind:hearted={file.hearted} />
       </div>
