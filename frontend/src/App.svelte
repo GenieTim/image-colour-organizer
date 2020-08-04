@@ -53,24 +53,6 @@
       'Filtering done. ' + sortedFilteredFiles.length + ' images remaining.',
     )
   }
-
-  // the grid layouting using Masonry
-  import { onMount, afterUpdate } from 'svelte/internal'
-  import Masonry from 'masonry-layout'
-  let grid
-  let masonryInstance
-  onMount(async () => {
-    masonryInstance = new Masonry(grid, {
-      initLayout: false,
-      columnWidth: '.grid-sizer',
-      itemSelector: '.grid-item',
-      percentPosition: true,
-    })
-  })
-
-  afterUpdate(() => {
-    masonryInstance.layout()
-  })
 </script>
 
 <style>
@@ -79,8 +61,12 @@
     padding: 1em;
     margin: 0 auto;
   }
-  :global(.grid-item) {
-    width: 20%;
+
+  .grid {
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 1em;
   }
 </style>
 
@@ -128,7 +114,6 @@
     <div hidden={filtering}>Status: Filtering...</div>
   {/if}
   <div class="grid" bind:this={grid}>
-    <div class="grid-sizer" style="width: 20%; min-height: 20vw" />
     {#each sortedFilteredFiles as file}
       <div class="grid-item">
         <GridImageElement
