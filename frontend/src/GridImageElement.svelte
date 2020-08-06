@@ -1,29 +1,33 @@
 <script>
   import { onMount } from 'svelte'
-  import LazyImage from 'svelte-lazy-image'
-  import { fromString } from 'uuidv4'
+
+  // import { fromString } from 'uuidv4'
 
   export let filePath = ''
   export let imageSizes = {}
   export let palette = []
   export let hearted = false
+  export let storageName = ''
 
   function hashCode(txt) {
     if (!txt) {
       return null
     }
-    return fromString(txt) //crypto.createHash('md5').update(txt).digest('hex');
+    return txt.replace(/\W/g, '_') // fromString(txt) //crypto.createHash('md5').update(txt).digest('hex');
   }
 
   onMount(() => {
-    let storageName = 'a' + hashCode(filePath)
-    hearted = localStorage.getItem('storageName')
-
-    return () => localStorage.setItem(storageName, hearted)
+    storageName = 'a' + hashCode(filePath)
+    hearted = localStorage.getItem(storageName) !== null
   })
 
   function toggleLike() {
     hearted = !hearted
+    if (hearted) {
+      localStorage.setItem(storageName, true)
+    } else {
+      localStorage.removeItem(storageName)
+    }
   }
 </script>
 
@@ -35,7 +39,7 @@
   }
 
   ul {
-    position: absolute;
+    /* position: absolute; */
     bottom: 0;
     margin: 0;
     padding: 0;
@@ -55,7 +59,7 @@
 <div>
   <a href="file://{filePath}" title="Datei öffnen">
     <img
-      src={imageSizes[600]}
+      src="/resized-images/{imageSizes[600]}"
       placeholder="https://via.placeholder.com/250?text=placeholder"
       alt="Image from {filePath}"
       loading="lazy" />

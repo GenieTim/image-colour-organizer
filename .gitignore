@@ -106,3 +106,4 @@ dist
 image-colour-export-cache.json
 backend/out.txt
 backend/out2.txt
+image-colour-export.json

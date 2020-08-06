@@ -98,7 +98,7 @@ class IndexerCommand extends Command {
     let targetFilePath = path.join(__dirname, '/../../../image-colour-export.json')
 
     let jsonToWrite = JSON.stringify(allFiles.concat(initialProcessedFiles))
-    this.log('Writing to file: ' + targetFilePath + ', found ' + allFiles.length + ' files.')
+    this.log('Writing to file: "' + targetFilePath + '", found ' + allFiles.length + ' files.')
     try {
       fs.writeFileSync(targetFilePath, jsonToWrite, {encoding: 'utf-8'})
     } catch (error) {
@@ -129,10 +129,10 @@ class IndexerCommand extends Command {
           // do not recompile if already exits & current
           continue
         } else {
-          this.possiblyLog('Will generate again: ' + imageFile + ' is newer then ' + targetFile)
+          this.possiblyLog('Will generate again: "' + imageFile + '" is newer then "' + targetFile + '"')
         }
       } else {
-        this.possiblyLog('File ' + targetFile + ' not found. Will generate...')
+        this.possiblyLog('File "' + targetFile + '" not found. Will generate...')
       }
       sizesToDo.push(size)
       targetFilePaths.push(targetFile)
@@ -145,7 +145,7 @@ class IndexerCommand extends Command {
       try {
         image = await Jimp.read(imageFile)
       } catch (error) {
-        this.error('Failed to read ' + imageFile + '. Error: ' + error, {exit: false})
+        this.error('Failed to read "' + imageFile + '". Error: ' + error, {exit: false})
         return files
       }
       for (let iSize = 0; iSize < sizesToDo.length; ++iSize) {
@@ -160,9 +160,9 @@ class IndexerCommand extends Command {
           await sizedImage.resize(sizesToDo[iSize], Jimp.AUTO)
           await sizedImage.quality(68)
           await sizedImage.writeAsync(targetFilePaths[iSize])
-          this.possiblyLog('Output ' + targetFilePaths[iSize] + ' from ' + imageFile)
+          this.possiblyLog('Output "' + targetFilePaths[iSize] + '" from "' + imageFile + '"')
         } catch (error) {
-          this.error('Failed to write ' + targetFilePaths[iSize] + ' from ' + imageFile + '. Error: ' + error, {exit: false})
+          this.error('Failed to write "' + targetFilePaths[iSize] + '" from "' + imageFile + '". Error: ' + error, {exit: false})
         }
       }
     }
