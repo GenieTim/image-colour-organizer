@@ -54,6 +54,8 @@
     padding: 0;
     list-style: none;
     z-index: 2;
+    width: 100%;
+    text-align: center;
   }
 
   li {
@@ -80,12 +82,14 @@
     </button>
   </div>
   <div class="card-body">
-    <p class="card-text">
+    <div class="card-text">
+      <ul>
       {#each palette as colour}
         <li
           style="background-color: rgb({colour[0]}, {colour[1]}, {colour[2]})"
           alt={colour} />
       {/each}
-    </p>
+      </ul>
+    </div>
   </div>
 </div>

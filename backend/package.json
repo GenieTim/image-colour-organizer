@@ -8,9 +8,9 @@
   },
   "bugs": "https://github.com/GenieTim/image-colour-organizer/issues",
   "dependencies": {
-    "@oclif/command": "^1.7.0",
-    "@oclif/config": "^1.16.0",
-    "@oclif/plugin-help": "^3.1.0",
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/plugin-help": "^3.2.0",
     "colorthief": "^2.3.2",
     "is-image": "^3.0.0",
     "jimp": "^0.14.0"
