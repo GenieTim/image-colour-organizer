@@ -34,13 +34,22 @@
 <style>
   img {
     z-index: 1;
-    max-width: 20vw;
     height: auto;
   }
 
+  div.parent {
+    position: relative;
+    max-width: 20vw;
+  }
+
+  div.heart {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    z-index: 2;
+  }
+
   ul {
-    /* position: absolute; */
-    bottom: 0;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -48,30 +57,35 @@
   }
 
   li {
-    height: 0.5em;
-    width: 0.5em;
+    height: 1em;
+    width: 1em;
     margin: 0;
-    padding: 0.1em;
+    padding: 0.25em;
     display: inline-block;
   }
 </style>
 
-<div>
+<div class="parent card">
   <a href="file://{filePath}" title="Datei öffnen">
     <img
       src="/resized-images/{imageSizes[600]}"
+      class="card-img-top"
       placeholder="https://via.placeholder.com/250?text=placeholder"
       alt="Image from {filePath}"
       loading="lazy" />
   </a>
-  <button on:click={toggleLike}>
-    {#if hearted}❤️{:else}♡{/if}
-  </button>
-  <ul>
-    {#each palette as colour}
-      <li
-        style="background-color: rgb({colour[0]}, {colour[1]}, {colour[2]})"
-        alt={colour} />
-    {/each}
-  </ul>
+  <div class="heart">
+    <button on:click={toggleLike}>
+      {#if hearted}❤️{:else}♡{/if}
+    </button>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      {#each palette as colour}
+        <li
+          style="background-color: rgb({colour[0]}, {colour[1]}, {colour[2]})"
+          alt={colour} />
+      {/each}
+    </p>
+  </div>
 </div>

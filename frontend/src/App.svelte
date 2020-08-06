@@ -1,6 +1,7 @@
 <script>
   // TODO: move this to some sort of config or input or whatever
   import { HsvPicker } from 'svelte-color-picker'
+  import { fade, slide } from 'svelte/transition'
   import fileIndex from '../../image-colour-export.json'
   import GridImageElement from './GridImageElement.svelte'
   import { deltaE, rgb2lab } from './utils/colourUtil'
@@ -112,9 +113,11 @@
           </div>
         </div>
         <div class="form-group">
-          <div hidden={!filterColour}>
-            <HsvPicker on:colorChange={colourChange} startColor={'#B01BCF'} />
-          </div>
+          {#if filterColour}
+            <div transition:slide>
+              <HsvPicker on:colorChange={colourChange} startColor={'#B01BCF'} />
+            </div>
+          {/if}
         </div>
         <div class="form-group">
           <div class="form-check">
@@ -135,11 +138,11 @@
   </details>
   <hr />
   {#if filtering}
-    <div hidden={filtering}>Status: Filtering...</div>
+    <div transition:fade>Status: Filtering...</div>
   {/if}
   <div class="grid">
     {#each sortedFilteredFiles as file}
-      <div class="grid-item">
+      <div class="grid-item" transition:fade>
         <GridImageElement
           filePath={file.originalPath}
           imageSizes={file.resizedImages}
