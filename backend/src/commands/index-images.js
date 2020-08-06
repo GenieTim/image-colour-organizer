@@ -25,6 +25,21 @@ class IndexerCommand extends Command {
   async run() {
     const {args, flags} = this.parse(IndexerCommand)
     this.debug = flags.debug
+
+    // load "cache"
+    let cacheFilePath = path.join(__dirname, '/../../../image-colour-export-cache.json')
+    let alreadyProcessedFilePaths = []
+    let alreadyProcessedFiles = []
+    try {
+      let alreadyProcessedFiles = JSON.parse(fs.readFileSync(cacheFilePath))
+      for (let i = 0; i < alreadyProcessedFiles.length; ++i) {
+        alreadyProcessedFilePaths.push(alreadyProcessedFiles[i].originalPath)
+      }
+    } catch (error) {
+      // e.g. file does not exist (yet)
+    }
+    let initialProcessedFiles = alreadyProcessedFiles
+
     // walk directory and checkout each file
     let thisCommand = this
     let allFiles = await this.walkDirectory(args.path, flags.recurse, async function (filePath) {
@@ -35,6 +50,11 @@ class IndexerCommand extends Command {
         return
       }
       thisCommand.possiblyLog('Image found at: ' + filePath)
+
+      if (alreadyProcessedFilePaths.includes(filePath)) {
+        thisCommand.possiblyLog('Skipping ' + filePath + ' since it was found processed in cache')
+        return
+      }
 
       // determine the color palette
       let palette = {}
@@ -47,19 +67,37 @@ class IndexerCommand extends Command {
         return
       }
       // resize file
-      let resizedFiles = await thisCommand.resizeImageFile(args.path, filePath)
+      let resizedFiles = []
+      try {
+        resizedFiles = await thisCommand.resizeImageFile(args.path, filePath)
+      } catch (error) {
+        thisCommand.error(error, {exit: false})
+      }
 
       // return a simple JSON object describing the found file
-      return {
+      let returnValue = {
         resizedImages: resizedFiles,
         originalPath: filePath,
         palette: palette,
       }
+
+      // write cache every 25 files
+      alreadyProcessedFiles.push(returnValue)
+      if (alreadyProcessedFiles.length % 25 === 0) {
+        try {
+          fs.writeFileSync(cacheFilePath, JSON.stringify(alreadyProcessedFiles), {encoding: 'utf-8'})
+        } catch (error) {
+          thisCommand.possiblyLog(error)
+        }
+      }
+
+      return returnValue
     })
 
-    // let targetFilePath = this.config.home + '/image-colours-' + Date.now() + '.json'
+    // write final file
     let targetFilePath = path.join(__dirname, '/../../../image-colour-export.json')
-    let jsonToWrite = JSON.stringify(allFiles)
+
+    let jsonToWrite = JSON.stringify(allFiles.concat(initialProcessedFiles))
     this.log('Writing to file: ' + targetFilePath + ', found ' + allFiles.length + ' files.')
     try {
       fs.writeFileSync(targetFilePath, jsonToWrite, {encoding: 'utf-8'})
@@ -77,7 +115,7 @@ class IndexerCommand extends Command {
     // check which sizes are needed at all based on the file mtime in order not read the file too eager
     let sizesToDo = []
     let targetFilePaths = []
-    let sizes = [150, 300, 600, 900]
+    let sizes = [600, 300, 150]
     let files = {}
     for (let size of sizes) {
       let targetFileName = fileName.name + '-' + size + fileName.ext
@@ -91,10 +129,10 @@ class IndexerCommand extends Command {
           // do not recompile if already exits & current
           continue
         } else {
-          // console.info("Will generate again: " + file + " is newer then " + targetFile)
+          this.possiblyLog('Will generate again: ' + imageFile + ' is newer then ' + targetFile)
         }
       } else {
-        // console.info("File " + targetFile + " not found.");
+        this.possiblyLog('File ' + targetFile + ' not found. Will generate...')
       }
       sizesToDo.push(size)
       targetFilePaths.push(targetFile)
@@ -103,7 +141,13 @@ class IndexerCommand extends Command {
     // then, do the actual processing
     if (sizesToDo.length > 0) {
       // we do the loop over the sizes twice in order to read only the files we really need to
-      let image = await Jimp.read(imageFile)
+      let image
+      try {
+        image = await Jimp.read(imageFile)
+      } catch (error) {
+        this.error('Failed to read ' + imageFile + '. Error: ' + error, {exit: false})
+        return files
+      }
       for (let iSize = 0; iSize < sizesToDo.length; ++iSize) {
         // do not scale up, only down...
         // note that this leads to an overhead in time this script takes
@@ -112,10 +156,14 @@ class IndexerCommand extends Command {
         }
         // clone
         let sizedImage = image
-        await sizedImage.resize(sizesToDo[iSize], Jimp.AUTO)
-        await sizedImage.quality(68)
-        await sizedImage.writeAsync(targetFilePaths[iSize])
-        this.possiblyLog('Output ' + targetFilePaths[iSize] + ' from ' + imageFile)
+        try {
+          await sizedImage.resize(sizesToDo[iSize], Jimp.AUTO)
+          await sizedImage.quality(68)
+          await sizedImage.writeAsync(targetFilePaths[iSize])
+          this.possiblyLog('Output ' + targetFilePaths[iSize] + ' from ' + imageFile)
+        } catch (error) {
+          this.error('Failed to write ' + targetFilePaths[iSize] + ' from ' + imageFile + '. Error: ' + error, {exit: false})
+        }
       }
     }
 
