@@ -1,4 +1,6 @@
 # image-colour-organizer
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGenieTim%2Fimage-colour-organizer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGenieTim%2Fimage-colour-organizer?ref=badge_shield)
+
 A toolset providing (a) indexer of photos/images and (b) a frontend to sort &amp; filter the images by colour
 
 ## Usage
@@ -14,3 +16,7 @@ Currently, the usage requires some work:
 6. Open the link that is displayed in the console; probably [http://localhost:5000/](http://localhost:5000/). Have fun!
 
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGenieTim%2Fimage-colour-organizer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGenieTim%2Fimage-colour-organizer?ref=badge_large)
