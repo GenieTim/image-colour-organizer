@@ -17,9 +17,9 @@
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.10",
-    "eslint": "^8.6.0",
+    "eslint": "^8.7.0",
     "eslint-config-oclif": "^4.0.0",
-    "globby": "^12.0.2"
+    "globby": "^13.1.0"
   },
   "engines": {
     "node": ">=8.0.0"
