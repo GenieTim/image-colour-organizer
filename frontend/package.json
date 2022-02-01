@@ -20,7 +20,7 @@
     "empfindung": "^1.0.1",
     "sirv-cli": "^2.0.2",
     "svelte-color-picker": "^1.0.7",
-    "svelte-lazy-image": "0.2.2",
+    "svelte-lazy-image": "0.5.0",
     "uuidv4": "^6.2.12"
   }
 }
