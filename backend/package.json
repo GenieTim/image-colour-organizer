@@ -8,18 +8,18 @@
   },
   "bugs": "https://github.com/GenieTim/image-colour-organizer/issues",
   "dependencies": {
-    "@oclif/command": "^1.8.20",
-    "@oclif/config": "^1.18.6",
-    "@oclif/plugin-help": "^5.1.19",
-    "colorthief": "^2.3.2",
+    "@oclif/command": "^1.8.24",
+    "@oclif/config": "^1.18.8",
+    "@oclif/plugin-help": "^5.2.9",
+    "colorthief": "^2.4.0",
     "is-image": "^3.1.0",
-    "jimp": "^0.16.2"
+    "jimp": "^0.22.7"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.10",
-    "eslint": "^8.29.0",
+    "eslint": "^8.39.0",
     "eslint-config-oclif": "^4.0.0",
-    "globby": "^13.1.2"
+    "globby": "^13.1.4"
   },
   "engines": {
     "node": ">=8.0.0"
