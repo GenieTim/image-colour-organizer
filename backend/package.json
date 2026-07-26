@@ -10,16 +10,16 @@
   "dependencies": {
     "@oclif/command": "^1.8.36",
     "@oclif/config": "^1.18.17",
-    "@oclif/plugin-help": "^6.2.53",
+    "@oclif/plugin-help": "^6.2.54",
     "colorthief": "^3.4.0",
     "is-image": "^4.0.0",
     "jimp": "^1.6.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.10",
-    "eslint": "^10.6.0",
-    "eslint-config-oclif": "^6.0.174",
-    "globby": "^16.2.0"
+    "eslint": "^10.8.0",
+    "eslint-config-oclif": "^6.0.179",
+    "globby": "^16.2.2"
   },
   "engines": {
     "node": ">=8.0.0"
